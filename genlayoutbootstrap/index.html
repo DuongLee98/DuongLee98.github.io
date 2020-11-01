@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link rel="stylesheet" href="./mycss.css"/>
+</head>
+<body>
+
+<div class="container" id="root">
+	<!-- <div class="row" id="r_1">
+		<div class="col-6 border" id="c_1">ITEM 1</div>
+		<div class="col-6 border" id="c_2">ITEM 2</div>
+	</div>
+	<div class="row" id="r_2">
+		<div class="col-6 border" id="c_3">ITEM 3</div>
+		<div class="col-6 border" id="c_4">
+			<div class="row" id="r_3">
+				<div class="col-6 border" id="c_5">ITEM 4</div>
+				<div class="col-6 border" id="c_6">ITEM 5</div>
+			</div>
+		</div>
+	</div> -->
+</div>
+
+<div class="container mt-5">
+	<div class="row">
+		<div class="col border">
+			<ul class="mt-1" id="myUL">
+				<li id="troot">
+					<!-- <span class="caret">root</span>
+					<ul class="nested">
+						<li>
+							<span class="caret">r_1</span>
+							<ul class="nested">
+								<li>c_1</li>
+								<li>c_2</li>
+							</ul>
+						</li>
+						<li>
+							<span class="caret">r_2</span>
+							<ul class="nested">
+								<li>c_3</li>
+								<li>
+									<span class="caret">c_4</span>
+									<ul class="nested">
+										<li>
+											<span class="caret">r_3</span>
+											<ul class="nested">
+												<li>c_5</li>
+												<li>c_6</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul> -->
+				</li>
+			</ul>
+		</div>
+		<div class="col border">
+			<table class="mt-1 table table-bordered">
+				<tbody>
+					<tr>
+						<td>Selected: </td>
+						<td><input id="selectdata" class="form-control" type="text"/></td>
+					</tr>
+					<tr>
+						<td>Chose: </td>
+						<td><button id="addrow" class="btn btn-primary">Row</button> <button id="addcol" class="btn btn-success">Col</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<script>
+	$(document).ready(() => {
+		var selectbf = "";
+		var select = "";
+		var rid = 4;
+		var cid = 7;
+		$( document ).on('click', '.sl', function(){
+			
+			
+			if (select == "")
+			{
+				// selectbf = $(this).text();
+			}
+			else
+			{
+				selectbf = select;
+				$("#"+selectbf).css('background-color', 'transparent');
+			}
+			select = $(this).text();
+
+			$("#"+select).css('background-color', 'gray');
+			console.log(select)
+			
+			val = select.split("_");
+			// console.log(val)
+			$("#selectdata").val(select);
+			if (val[0] == "r")
+			{
+				$("#addrow").prop("disabled", true);
+				$("#addcol").prop("disabled", false);
+			}
+			else
+			{
+				$("#addrow").prop("disabled", false);
+				$("#addcol").prop("disabled", true);
+			}
+		})
+
+		function deepSearch(data, vals, dataadd)
+		{
+			var keys = Object.keys(data);
+			var fin = false;
+			keys.forEach(element => {
+				if (element == vals)
+				{
+					fin = true;
+				}
+			});
+
+			if (fin)
+			{
+				data[vals][dataadd] = {};
+				return;
+			}
+			else
+			{
+				keys.forEach(element => {
+					deepSearch(data[element], vals, dataadd)
+				});
+			}
+		}
+
+		$("#addrow").on('click', function(){
+			deepSearch(data, select, "r_"+rid);
+			rid++;
+			console.log(data)
+			$("#root").empty();
+			$("#troot").empty();
+			genViewTree(data.root, "root")
+			genView(data.root, "root")
+		})
+
+		$("#addcol").on('click', function(){
+			deepSearch(data, select, "c_"+cid);
+			cid++;
+			console.log(data)
+			$("#root").empty();
+			$("#troot").empty();
+			genViewTree(data.root, "root")
+			genView(data.root, "root")
+		})
+	})
+	data = {};
+	data.root = {};
+	data.root.r_1 = {};
+	data.root.r_1.c_1 = {};
+	data.root.r_1.c_2 = {};
+	
+	data.root.r_2 = {};
+	data.root.r_2.c_3 = {};
+	data.root.r_2.c_4 = {};
+	data.root.r_2.c_4.r_3 = {};
+	data.root.r_2.c_4.r_3.c_5 = {};
+	data.root.r_2.c_4.r_3.c_6 = {};
+
+	console.log(data)
+
+	function genViewTree(data, parent)
+	{
+		var keys = Object.keys(data);
+		// console.log(parent , " ", keys)
+		if (keys.length <= 0)
+		{
+			$("#t"+parent).append('<button class="sl">'+parent+'</button>')
+		}
+		else
+		{
+			$("#t"+parent).append('\
+			<span class="caret">'+'<button class="sl">'+parent+'</button>'+'</span>\
+			<ul class="nested"> \
+			</ul> \
+			');
+
+			keys.forEach(element => {
+				$("#t"+parent + " ul").append("<li id='t"+element+"'></li>")
+				
+				
+			});
+			keys.forEach(element => {
+				genViewTree(data[element], element)
+			});
+			
+		}
+
+	}
+	genViewTree(data.root, "root")
+
+	function genView(data, parent)
+	{
+		var keys = Object.keys(data);
+		// console.log(parent , " ", keys)
+		if (keys.length <= 0)
+		{
+			$("#"+parent).append('ITEM')
+			$("#"+parent).addClass("border")
+		}
+		keys.forEach(element => {
+			val = element.split("_");
+			// console.log(val)
+			if (val[0] == "r")
+			{
+				$("#"+parent).append('<div class="row" id="'+element+'"></div>')
+			}
+			else if (val[0] == "c")
+			{
+				$("#"+parent).append('<div class="col" id="'+element+'"></div>')
+			}
+
+			genView(data[element], element)
+		});
+	}
+	genView(data.root, "root")
+
+	function setEvent()
+	{
+		var toggler = document.getElementsByClassName("caret");
+		var i;
+
+		for (i = 0; i < toggler.length; i++) {
+			toggler[i].addEventListener("click", function() {
+				this.parentElement.querySelector(".nested").classList.toggle("active");
+				this.classList.toggle("caret-down");
+			});
+		}
+	}
+	// setEvent()
+	
+	
+</script>
+
+
+
+</body>
+</html>
+
