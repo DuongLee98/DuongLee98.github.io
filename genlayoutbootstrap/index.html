@@ -68,7 +68,11 @@
 					</tr>
 					<tr>
 						<td>Chose: </td>
-						<td><button id="addrow" class="btn btn-primary">Row</button> <button id="addcol" class="btn btn-success">Col</button></td>
+						<td>
+							<button id="addrow" class="btn btn-primary">Row</button> 
+							<button id="addcol" class="btn btn-success">Col</button>
+							<button id="delete" class="btn btn-danger">Delete</button>
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -118,7 +122,7 @@
 			}
 		})
 
-		function deepSearch(data, vals, dataadd)
+		function deepSearchAdd(data, vals, dataadd)
 		{
 			var keys = Object.keys(data);
 			var fin = false;
@@ -137,13 +141,37 @@
 			else
 			{
 				keys.forEach(element => {
-					deepSearch(data[element], vals, dataadd)
+					deepSearchAdd(data[element], vals, dataadd)
+				});
+			}
+		}
+
+		function deepSearchDelete(data, vals)
+		{
+			var keys = Object.keys(data);
+			var fin = false;
+			keys.forEach(element => {
+				if (element == vals)
+				{
+					fin = true;
+				}
+			});
+
+			if (fin)
+			{
+				delete data[vals]
+				return;
+			}
+			else
+			{
+				keys.forEach(element => {
+					deepSearchDelete(data[element], vals)
 				});
 			}
 		}
 
 		$("#addrow").on('click', function(){
-			deepSearch(data, select, "r_"+rid);
+			deepSearchAdd(data, select, "r_"+rid);
 			rid++;
 			console.log(data)
 			$("#root").empty();
@@ -153,9 +181,17 @@
 		})
 
 		$("#addcol").on('click', function(){
-			deepSearch(data, select, "c_"+cid);
+			deepSearchAdd(data, select, "c_"+cid);
 			cid++;
 			console.log(data)
+			$("#root").empty();
+			$("#troot").empty();
+			genViewTree(data.root, "root")
+			genView(data.root, "root")
+		})
+
+		$("#delete").on('click', function(){
+			deepSearchDelete(data.root, select)
 			$("#root").empty();
 			$("#troot").empty();
 			genViewTree(data.root, "root")
