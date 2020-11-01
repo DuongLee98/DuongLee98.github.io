@@ -57,11 +57,12 @@
 								<option value="transparent">transparent</option>
 							</select>
 						</td>
+						<td><button id="setbg" class="form-control">Set BG</button></td>
 					</tr>
 					<tr>
 						<td>Height: </td>
 						<td><input id="hig" class="form-control" type="number"/></td>
-						<td><button id="sethig" class="form-control">Set</button></td>
+						<td><button id="sethig" class="form-control">Set He</button></td>
 					</tr>
 				</tbody>
 			</table>
@@ -76,6 +77,7 @@
 <script>
 	$(document).ready(() => {
 		var selectbf = "";
+		var savebg = "";
 		var select = "";
 		var rid = 1;	
 		var cid = 1;
@@ -88,11 +90,13 @@
 			}
 			else
 			{
-				selectbf = select;
-				$("#"+selectbf).css('background-color', 'transparent');
+				// selectbf = select;
+				// if (savebg != "" || savebg != "white")
+					// $("#"+selectbf).css('background-color', savebg);
 			}
 			select = $(this).text();
-
+			
+			resetStyle(data.root, "root")
 			$("#"+select).css('background-color', 'gray');
 			console.log(select)
 			
@@ -243,13 +247,15 @@
 			genView(data.root, "root")
 		})
 
-		$("#bg").on('change', function(){
-			console.log($(this).val())
-			deepSet(data, select, 'background-color', $(this).val());
+		$("#setbg").on('click', function(){
+			console.log($("#bg").val())
+			deepSet(data, select, 'background-color', $("#bg").val());
 			$("#root").empty();
 			$("#troot").empty();
 			genViewTree(data.root, "root")
 			genView(data.root, "root")
+
+			savebg = $("#bg").val();
 		})
 
 		$("#sethig").on('click', function(){
@@ -316,6 +322,38 @@
 	}
 	genViewTree(data.root, "root")
 
+	function resetStyle(data, parent)
+	{
+		var keys = [];
+		var keys1 = Object.keys(data);
+		keys1.forEach( k =>
+		{
+			if (k != "style")
+			{
+				keys.push(k);
+			}
+		})
+
+		if (keys.length <= 0)
+		{
+			if (data["style"] != undefined)
+			{
+				var st = Object.keys(data.style);
+				st.forEach(element => {
+					$("#"+parent).css(element, data.style[element])
+				});
+			}
+			else
+			{
+				$("#"+parent).css('background-color', 'white')
+			}
+		}
+
+		keys.forEach(element => {
+			resetStyle(data[element], element)
+		});
+	}
+
 	function genView(data, parent)
 	{
 		var keys = [];
@@ -338,6 +376,10 @@
 				st.forEach(element => {
 					$("#"+parent).css(element, data.style[element])
 				});
+			}
+			else
+			{
+				$("#"+parent).css('background-color', 'white')
 			}
 		}
 		keys.forEach(element => {
